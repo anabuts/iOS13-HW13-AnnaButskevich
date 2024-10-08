@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class ViewController: UIViewController {
+final class SettingsViewController: UIViewController {
 
     // MARK: - UI
 
@@ -16,7 +16,7 @@ final class ViewController: UIViewController {
 
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
-        tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(SettingsTableViewCell.self, forCellReuseIdentifier: SettingsTableViewCell.id)
         tableView.dataSource = self
         tableView.delegate = self
         return tableView
@@ -36,7 +36,7 @@ final class ViewController: UIViewController {
     // MARK: - Setup
 
     private func setupView() {
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
     }
 
     private func setupHierarchy() {
@@ -53,12 +53,9 @@ final class ViewController: UIViewController {
             make.edges.equalToSuperview()
         }
     }
-
-    // MARK: - Action
-
 }
 
-extension ViewController: UITableViewDataSource, UITableViewDelegate {
+extension SettingsViewController: UITableViewDataSource, UITableViewDelegate {
 
     func numberOfSections(in tableView: UITableView) -> Int {
         return models?.count ?? 0
@@ -68,23 +65,10 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? CustomTableViewCell
-        cell?.model = models?[indexPath.section][indexPath.row]
-        let settingOptionType = models?[indexPath.section][indexPath.row].options
-        cell?.model = models?[indexPath.section][indexPath.row]
-        let switchButton = UISwitch(frame: CGRectZero) as UISwitch
-        switchButton.isOn = false
-        cell?.accessoryType = .disclosureIndicator
+        let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableViewCell.id, for: indexPath) as? SettingsTableViewCell
 
-        switch settingOptionType {
-        case .staticCell:
-            cell?.accessoryType = .disclosureIndicator
-        case .detailCell:
-            cell?.accessoryType = .detailDisclosureButton
-        case .switchCell:
-            cell?.accessoryView = switchButton
-        case .none:
-            cell?.accessoryType = .none
+        if let cellSetting = models?[indexPath.section][indexPath.row] {
+            cell?.configureWith(model: cellSetting)
         }
 
         return cell ?? UITableViewCell()
@@ -95,10 +79,14 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+        if models?[indexPath.section][indexPath.row].options == .switchCell {
+            return
+        }
+
         let viewController = DetailViewController()
         tableView.deselectRow(at: indexPath, animated: true)
         viewController.model = models?[indexPath.section][indexPath.row]
         navigationController?.pushViewController(viewController, animated: true)
     }
-
 }

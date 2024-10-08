@@ -51,7 +51,7 @@ final class DetailViewController: UIViewController {
     // MARK: - Setup
 
     private func setupView() {
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
     }
 
     private func setupHierarchy() {
@@ -79,5 +79,4 @@ final class DetailViewController: UIViewController {
             make.centerX.equalToSuperview()
         }
     }
-
 }

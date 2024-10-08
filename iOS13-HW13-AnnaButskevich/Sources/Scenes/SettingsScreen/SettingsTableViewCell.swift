@@ -1,46 +1,41 @@
 //
-//  CustomTableViewCell.swift
+//  SettingsTableViewCell.swift
 //  iOS13-HW13-AnnaButskevich
 //
-//  Created by Анна Буцкевич on 24.07.24.
+//  Created by Анна Буцкевич on 8.10.24.
 //
 
 import UIKit
 import SnapKit
 
-class CustomTableViewCell: UITableViewCell {
+class SettingsTableViewCell: UITableViewCell {
 
-    var model: SettingsOption? {
-        didSet {
-            iconImageView.image = model?.icon
-            iconContainer.backgroundColor = model?.iconBackgroundColor
-            label.text = model?.label
-            status.text = model?.status
-        }
-    }
+    static let id = "SettingsTableViewCell"
+
+    private var model: SettingsOption?
 
     // MARK: - UI
 
-    lazy var iconContainer: UIView = {
+    private lazy var iconContainer: UIView = {
         let container = UIView()
         container.layer.cornerRadius = 6
         container.backgroundColor = .blue
         return container
     }()
 
-    lazy var iconImageView: UIImageView = {
+    private lazy var iconImageView: UIImageView = {
         let icon = UIImageView()
         icon.tintColor = .white
         icon.contentMode = .scaleAspectFit
         return icon
     }()
 
-    lazy var label: UILabel = {
+    private lazy var label: UILabel = {
         let label = UILabel()
         return label
     }()
 
-    lazy var status: UILabel = {
+    private lazy var status: UILabel = {
         let status = UILabel()
         status.textColor = .systemGray
         return status
@@ -91,6 +86,28 @@ class CustomTableViewCell: UITableViewCell {
         }
     }
 
+    func configureWith(model: SettingsOption) {
+        iconImageView.image = model.icon
+        iconContainer.backgroundColor = model.iconBackgroundColor
+        label.text = model.label
+        status.text = model.status
+
+        let settingOptionType = model.options
+        let switchButton = UISwitch(frame: CGRectZero) as UISwitch
+        switchButton.isOn = false
+        accessoryType = .disclosureIndicator
+
+        switch settingOptionType {
+        case .staticCell:
+            accessoryType = .disclosureIndicator
+        case .detailCell:
+            accessoryType = .detailDisclosureButton
+        case .switchCell:
+            selectionStyle = .none
+            accessoryView = switchButton
+        }
+    }
+
     // MARK: - Reuse
 
     override func prepareForReuse() {
@@ -98,6 +115,6 @@ class CustomTableViewCell: UITableViewCell {
         iconImageView.image = nil
         label.text = nil
         iconContainer.backgroundColor = nil
+        accessoryView = nil
     }
-
 }
